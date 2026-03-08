@@ -3252,6 +3252,7 @@ function toggleNavyIntel() {
 
 function switchTheater(val) {
   currentTheater = val;
+  closeAllCmdPanels(); // close any open naval command panels on theater switch
   const navyView  = document.getElementById('navy-view');
   const landMain  = document.getElementById('main');
   const missionV  = document.getElementById('mission-view');
