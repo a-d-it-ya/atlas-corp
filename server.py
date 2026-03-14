@@ -1,7 +1,8 @@
 """
-ATLAS Backend Server v0.5
-- 7 drones + 5 UGVs
-- Sensor threat detection → operator approval → drone deployment
+ATLAS Backend Server v0.6
+- Army theater: 7 drones + 5 UGVs with full simulation
+- ADS-B: Live aircraft feed over India FIR via OpenSky Network
+- WebSocket broadcast to all connected clients
 """
 
 import asyncio
@@ -13,11 +14,12 @@ from collections import deque
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 
 from mavlink_sim import MAVLinkSimulator
+from adsb_feed import adsb_feed
 
-app = FastAPI(title="ATLAS OS Backend", version="0.5")
+app = FastAPI(title="ATLAS OS Backend", version="0.6")
 app.add_middleware(CORSMiddleware, allow_origins=["*"],
                    allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 
@@ -27,8 +29,8 @@ def serve_ui():
 
 # ── State ─────────────────────────────────────────────────────────────────────
 
-telemetry_store: dict[int, dict] = {}   # drones
-ugv_store:       dict[int, dict] = {}   # UGVs
+telemetry_store: dict[int, dict] = {}
+ugv_store:       dict[int, dict] = {}
 ws_clients:      set[WebSocket]  = set()
 event_log:       deque           = deque(maxlen=200)
 missions:        list[dict]      = []
@@ -69,6 +71,7 @@ push_log("ATLAS CORE", "System boot complete. All subsystems nominal.", "ok")
 push_log("SAT-LINK",   "Primary uplink established. ATLAS-SAT-01 acquired.", "ok")
 push_log("ATLAS AI",   "Threat detection model loaded. YOLO v11 active.", "info")
 push_log("ATLAS-C-01", "Command post online. 7 UAVs, 5 UGVs registered.", "ok")
+push_log("ADS-B",      "India FIR ADS-B feed initializing...", "info")
 
 # ── Callbacks ─────────────────────────────────────────────────────────────────
 
@@ -156,8 +159,6 @@ def on_detection(detection: dict):
     if len(pending_threats) >= 3:
         return
     pending_threats[detection['id']] = detection
-    print(f"[SENSOR] {detection['sensor_name']} → {detection['threat_class']} "
-          f"conf={detection['confidence']}%")
     loop = asyncio.get_event_loop()
     loop.create_task(_broadcast_threat(detection))
 
@@ -172,6 +173,8 @@ async def broadcast(payload: dict):
         except Exception:
             dead.add(ws)
     ws_clients.difference_update(dead)
+
+# ── Background loops ──────────────────────────────────────────────────────────
 
 async def telemetry_broadcast_loop():
     subtitles = {1:"Stealth Alpha",2:"Stealth Bravo",3:"Recon Charlie",
@@ -215,23 +218,62 @@ async def log_broadcast_loop():
                 await broadcast({"type": "log_batch", "entries": new})
         await asyncio.sleep(1.0)
 
-# ── REST ──────────────────────────────────────────────────────────────────────
+async def adsb_broadcast_loop():
+    """Broadcast ADS-B data to all clients every 30s (synced with fetch interval)."""
+    last_broadcast_ts = 0
+    while True:
+        await asyncio.sleep(5)  # check every 5s, broadcast when data is fresh
+        if not ws_clients:
+            continue
+        feed_ts = adsb_feed.last_updated
+        if feed_ts > last_broadcast_ts and not adsb_feed.is_stale:
+            aircraft = adsb_feed.aircraft
+            await broadcast({
+                "type":      "adsb_update",
+                "ts":        int(feed_ts * 1000),
+                "count":     len(aircraft),
+                "aircraft":  aircraft,
+                "status":    adsb_feed.status,
+            })
+            last_broadcast_ts = feed_ts
+            if aircraft:
+                push_log("ADS-B",
+                         f"India FIR: {len(aircraft)} aircraft tracked. "
+                         f"Feed: {adsb_feed.status.upper()}.",
+                         "info")
+
+# ── REST endpoints ────────────────────────────────────────────────────────────
+
+START_TIME = time.time()
 
 @app.get("/api/status")
 def get_status():
     return {
-        "server": "ATLAS CORE v0.5",
-        "uptime_s": int(time.time() - START_TIME),
-        "drones_active": sum(1 for t in telemetry_store.values() if t.get("armed")),
-        "drones_total": len(telemetry_store),
-        "ugvs_active": sum(1 for g in ugv_store.values() if g.get("armed")),
-        "ugvs_total": len(ugv_store),
-        "ws_clients": len(ws_clients),
-        "log_entries": len(event_log),
-        "missions": len(missions),
-        "pending_threats": len(pending_threats),
-        "ts": int(time.time()*1000),
+        "server":           "ATLAS CORE v0.6",
+        "uptime_s":         int(time.time() - START_TIME),
+        "drones_active":    sum(1 for t in telemetry_store.values() if t.get("armed")),
+        "drones_total":     len(telemetry_store),
+        "ugvs_active":      sum(1 for g in ugv_store.values() if g.get("armed")),
+        "ugvs_total":       len(ugv_store),
+        "ws_clients":       len(ws_clients),
+        "log_entries":      len(event_log),
+        "missions":         len(missions),
+        "pending_threats":  len(pending_threats),
+        "adsb":             adsb_feed.get_summary(),
+        "ts":               int(time.time()*1000),
     }
+
+@app.get("/api/adsb")
+def get_adsb():
+    """Latest ADS-B snapshot — India FIR."""
+    return {
+        "aircraft": adsb_feed.aircraft,
+        "summary":  adsb_feed.get_summary(),
+    }
+
+@app.get("/api/adsb/status")
+def get_adsb_status():
+    return adsb_feed.get_summary()
 
 @app.get("/api/assets")
 def get_assets():
@@ -298,8 +340,8 @@ async def websocket_endpoint(ws: WebSocket):
     await ws.accept()
     ws_clients.add(ws)
     push_log("ATLAS CORE", "UI client connected.", "info")
-    print(f"[WS] Client connected (total: {len(ws_clients)})")
 
+    # Send init payload including ADS-B snapshot
     await ws.send_text(json.dumps({
         "type": "init",
         "assets": {
@@ -311,9 +353,13 @@ async def websocket_endpoint(ws: WebSocket):
                        for g in ugv_store.values()],
             "static": STATIC_ASSETS,
         },
-        "log": list(event_log)[:30],
-        "missions": missions,
-        "pending_threats": list(pending_threats.values()),
+        "log":              list(event_log)[:30],
+        "missions":         missions,
+        "pending_threats":  list(pending_threats.values()),
+        "adsb": {
+            "aircraft": adsb_feed.aircraft,
+            "summary":  adsb_feed.get_summary(),
+        },
     }))
 
     try:
@@ -322,13 +368,22 @@ async def websocket_endpoint(ws: WebSocket):
             await handle_ws_message(ws, json.loads(raw))
     except WebSocketDisconnect:
         ws_clients.discard(ws)
-        print(f"[WS] Client disconnected (total: {len(ws_clients)})")
 
 async def handle_ws_message(ws: WebSocket, msg: dict):
     mtype = msg.get("type")
 
     if mtype == "ping":
         await ws.send_text(json.dumps({"type":"pong","ts":int(time.time()*1000)}))
+
+    elif mtype == "get_adsb":
+        # Client explicitly requesting latest ADS-B data
+        await ws.send_text(json.dumps({
+            "type":     "adsb_update",
+            "ts":       int(adsb_feed.last_updated * 1000),
+            "count":    len(adsb_feed.aircraft),
+            "aircraft": adsb_feed.aircraft,
+            "status":   adsb_feed.status,
+        }))
 
     elif mtype == "upload_mission":
         mission = msg.get("mission", {})
@@ -344,8 +399,8 @@ async def handle_ws_message(ws: WebSocket, msg: dict):
         await broadcast({"type": "mission_ack", "mission": mission})
 
     elif mtype == "deploy_drone":
-        threat_id:  str      = msg.get("threat_id") or ""
-        drone_name: str|None = msg.get("drone_name")
+        threat_id  = msg.get("threat_id") or ""
+        drone_name = msg.get("drone_name")
         threat = pending_threats.get(threat_id)
         if not threat:
             await ws.send_text(json.dumps({"type":"error","msg":"Threat not found"}))
@@ -371,7 +426,7 @@ async def handle_ws_message(ws: WebSocket, msg: dict):
         if threat_id:
             threat = pending_threats.pop(threat_id, None)
             if threat:
-                push_log("COMMAND", f"Threat {threat_id} dismissed. Class: {threat['threat_class']}.", "info")
+                push_log("COMMAND", f"Threat {threat_id} dismissed.", "info")
         await broadcast({"type": "threat_dismissed", "threat_id": threat_id})
 
     elif mtype == "rtb":
@@ -406,8 +461,6 @@ async def handle_ws_message(ws: WebSocket, msg: dict):
 
 # ── Startup ───────────────────────────────────────────────────────────────────
 
-START_TIME = time.time()
-
 @app.on_event("startup")
 async def startup():
     global sim
@@ -418,11 +471,13 @@ async def startup():
     loop.create_task(sim.run(hz=4.0))
     loop.create_task(telemetry_broadcast_loop())
     loop.create_task(log_broadcast_loop())
+    loop.create_task(adsb_feed.run())           # Start ADS-B background fetcher
+    loop.create_task(adsb_broadcast_loop())     # Broadcast ADS-B to clients
     print("=" * 55)
-    print("  ATLAS OS BACKEND — v0.5")
+    print("  ATLAS OS BACKEND — v0.6")
     print("  WebSocket : ws://localhost:8000/ws")
     print("  REST API  : http://localhost:8000/api/")
-    print("  Docs      : http://localhost:8000/docs")
+    print("  ADS-B     : India FIR — OpenSky Network")
     print("=" * 55)
 
 if __name__ == "__main__":

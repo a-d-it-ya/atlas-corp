@@ -514,6 +514,100 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 .mpa-mission-btn.active-mission { border-color:#ffcc00;background:rgba(255,204,0,0.1);color:#ffcc00; }
 .mpa-feedback { font-family:'Share Tech Mono',monospace;font-size:8px;color:#ffcc00;padding:4px 8px;display:none;background:rgba(255,204,0,0.05);border:1px solid rgba(255,204,0,0.2);margin-top:4px; }
 
+
+/* ===== AIR FORCE THEATER ===== */
+#air-view { position:fixed;top:42px;left:56px;right:0;bottom:24px;display:none;
+  grid-template-columns:260px 1fr 260px;grid-template-rows:1fr 180px;gap:1px;
+  background:var(--border1); }
+#air-view.active { display:grid; }
+#air-map { width:100%;height:100%; }
+.av-panel { background:var(--panel);position:relative;overflow:hidden; }
+.av { color:#ff9900; }
+.av-accent { color:#ffcc00; }
+
+/* Asset list */
+.air-asset-item { padding:6px 10px;border-bottom:1px solid var(--border1);cursor:pointer;transition:background 0.15s; }
+.air-asset-item:hover { background:rgba(255,153,0,0.08); }
+.air-asset-item.selected { background:rgba(255,153,0,0.15);border-left:2px solid #ff9900; }
+.air-asset-name { font-family:'Share Tech Mono',monospace;font-size:9px;color:#ff9900;letter-spacing:1px; }
+.air-asset-sub  { font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--text-dim);margin-top:1px; }
+.air-asset-stat { font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--text-mid);margin-top:2px; }
+
+/* Telemetry grid */
+.atg { display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border1); }
+.atc { background:var(--panel2);padding:8px 10px; }
+.atl { font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--text-dim);letter-spacing:1px; }
+.atv { font-family:'Orbitron',monospace;font-size:16px;color:#ff9900;margin:2px 0; }
+.atu { font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--text-dim); }
+
+/* Live traffic toggle */
+.live-toggle { display:flex;align-items:center;gap:8px;padding:6px 10px;
+  border-bottom:1px solid var(--border1);cursor:pointer; }
+.live-toggle-btn { width:32px;height:16px;border-radius:8px;background:#333;
+  position:relative;transition:background 0.3s;flex-shrink:0; }
+.live-toggle-btn.on { background:#ff9900; }
+.live-toggle-btn::after { content:'';position:absolute;width:12px;height:12px;
+  border-radius:50%;background:#fff;top:2px;left:2px;transition:left 0.3s; }
+.live-toggle-btn.on::after { left:18px; }
+.live-toggle-lbl { font-family:'Share Tech Mono',monospace;font-size:8px;
+  color:var(--text-mid);letter-spacing:1px; }
+
+/* Log */
+.air-log-entry { padding:3px 10px;border-bottom:1px solid var(--border1);
+  font-family:'Share Tech Mono',monospace;font-size:7px;line-height:1.5; }
+.air-log-src  { color:#ff9900; }
+.air-log-time { color:var(--text-dim); }
+.air-log-ok   { color:#00ff88; }
+.air-log-warn { color:#ffaa00; }
+.air-log-info { color:#00c8ff; }
+
+/* SAM site rings on map */
+.sam-label { font-family:'Share Tech Mono',monospace;font-size:8px;color:#ff4444;
+  background:rgba(0,0,0,0.7);padding:2px 4px;border:1px solid #ff444466; }
+
+
+/* Air threat modal */
+#air-threat-modal {
+  display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:380px;background:var(--panel);border:2px solid #ff4444;
+  box-shadow:0 0 40px rgba(255,68,68,0.4);z-index:9000;
+  font-family:'Share Tech Mono',monospace;
+}
+#air-threat-modal.active { display:block; }
+.atm-header { background:rgba(255,68,68,0.15);padding:10px 14px;border-bottom:1px solid #ff444466;
+  display:flex;align-items:center;justify-content:space-between; }
+.atm-title { font-family:'Orbitron',monospace;font-size:11px;color:#ff4444;letter-spacing:2px; }
+.atm-body { padding:14px; }
+.atm-class { font-family:'Orbitron',monospace;font-size:16px;color:#ff4444;margin-bottom:8px; }
+.atm-msg { font-size:9px;color:var(--text-mid);margin-bottom:10px;line-height:1.6; }
+.atm-grid { display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px; }
+.atm-stat { background:rgba(0,0,0,0.4);padding:6px 8px;border:1px solid var(--border2); }
+.atm-stat-lbl { font-size:7px;color:var(--text-dim);letter-spacing:1px; }
+.atm-stat-val { font-size:12px;color:#ff9900;margin-top:2px; }
+.atm-actions { display:flex;gap:8px; }
+.atm-btn { flex:1;padding:8px;font-family:'Share Tech Mono',monospace;font-size:8px;
+  letter-spacing:1px;cursor:pointer;border:1px solid;background:transparent; }
+.atm-btn-intercept { color:#ff4444;border-color:#ff4444; }
+.atm-btn-intercept:hover { background:rgba(255,68,68,0.15); }
+.atm-btn-dismiss { color:#888;border-color:#888; }
+.atm-btn-dismiss:hover { background:rgba(128,128,128,0.1); }
+
+/* Radar sweep animation */
+@keyframes radarSweep { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+.radar-sweep { animation:radarSweep 3s linear infinite; transform-origin:center; }
+
+/* Threat pulsing dot */
+.air-threat-dot {
+  width:14px;height:14px;border-radius:50%;background:rgba(255,68,68,0.9);
+  box-shadow:0 0 0 0 rgba(255,68,68,0.6);
+  animation:threatPulse 1.2s infinite;
+}
+@keyframes threatPulse {
+  0%{box-shadow:0 0 0 0 rgba(255,68,68,0.6)}
+  70%{box-shadow:0 0 0 12px rgba(255,68,68,0)}
+  100%{box-shadow:0 0 0 0 rgba(255,68,68,0)}
+}
+
 </style>
 </head>
 <body>
@@ -526,6 +620,7 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
   <select id="theater-select" onchange="switchTheater(this.value)" style="background:transparent;border:none;color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;padding-right:12px;">
     <option value="land">THEATER: INDIA-NORTH</option>
     <option value="navy">THEATER: INDIAN OCEAN</option>
+    <option value="air">THEATER: IAF AIRSPACE</option>
   </select>
   <span style="position:absolute;right:0;top:50%;transform:translateY(-50%);color:var(--accent);pointer-events:none;font-size:8px;">▾</span>
 </div>
@@ -882,6 +977,85 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
   <div class="ucp-section" style="border-bottom:none;">
     <button class="ucp-btn full danger" onclick="uuvEmergencySurface()">⚠ EMERGENCY SURFACE</button>
   </div>
+</div>
+
+
+
+<!-- ====== AIR FORCE THEATER VIEW ====== -->
+<div id="air-view">
+
+  <!-- LEFT: IAF Asset List -->
+  <div class="av-panel" style="grid-row:1/3;overflow-y:auto;">
+    <div class="ph">
+      <div class="pt av">IAF Assets</div>
+      <div class="pb live">CLASSIFIED</div>
+    </div>
+
+    <!-- Live traffic toggle -->
+    <div class="live-toggle" onclick="toggleLiveTraffic()">
+      <div class="live-toggle-btn" id="live-toggle-btn"></div>
+      <div>
+        <div class="live-toggle-lbl" id="live-toggle-lbl">LIVE TRAFFIC: OFF</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:6px;color:var(--text-dim);">OpenSky ADS-B · India FIR</div>
+      </div>
+    </div>
+
+    <div id="air-asset-list"></div>
+
+    <!-- Airbase status -->
+    <div style="padding:6px 10px;border-top:1px solid var(--border1);margin-top:4px;">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:7px;color:#ff9900;letter-spacing:1px;margin-bottom:4px;">AIRBASES</div>
+      <div id="air-base-list"></div>
+    </div>
+  </div>
+
+  <!-- CENTER: Map -->
+  <div class="av-panel" style="position:relative;grid-row:1/3;">
+    <div class="ph">
+      <div class="pt av">Indian Airspace Tactical Display</div>
+      <div id="air-map-coords" style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);margin-left:8px;"></div>
+      <button onclick="toggleRadarRings()" id="radar-toggle-btn" style="font-family:Orbitron,monospace;font-size:8px;letter-spacing:1px;padding:2px 8px;border:1px solid #ffcc0044;background:transparent;color:#888;cursor:pointer;margin-left:8px;">RADAR ▾</button>
+      <button onclick="toggleSAMRings()" id="sam-toggle-btn" style="font-family:Orbitron,monospace;font-size:8px;letter-spacing:1px;padding:2px 8px;border:1px solid #ff444444;background:transparent;color:#ff4444;cursor:pointer;margin-left:6px;">SAM RINGS ▾</button>
+      <button onclick="toggleAWACSCoverage()" id="awacs-toggle-btn" style="font-family:Orbitron,monospace;font-size:8px;letter-spacing:1px;padding:2px 8px;border:1px solid #ffcc0044;background:transparent;color:#ffcc00;cursor:pointer;margin-left:6px;">AWACS ▾</button>
+      <div class="pb">CLASSIFIED · ADS-B</div>
+    </div>
+    <div id="air-map" style="height:calc(100% - 32px);"></div>
+  </div>
+
+  <!-- RIGHT TOP: Telemetry -->
+  <div class="av-panel">
+    <div class="ph"><div class="pt av" id="air-telem-hdr">Aircraft Telemetry — Select Asset</div><div class="pb live">STREAMING</div></div>
+    <div class="atg">
+      <div class="atc"><div class="atl">SPEED</div><div class="atv" id="at-spd">—</div><div class="atu">KNOTS</div></div>
+      <div class="atc"><div class="atl">ALTITUDE</div><div class="atv" id="at-alt">—</div><div class="atu">FEET</div></div>
+      <div class="atc"><div class="atl">HEADING</div><div class="atv" id="at-hdg">—</div><div class="atu">DEGREES</div></div>
+      <div class="atc"><div class="atl">STATUS</div><div class="atv" style="font-size:10px;" id="at-status">—</div><div class="atu">STATE</div></div>
+    </div>
+    <div style="padding:8px 10px;border-top:1px solid var(--border1);">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--text-dim);letter-spacing:1px;margin-bottom:6px;">QUICK ORDERS</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;">
+        <button onclick="airScramble()" style="font-family:'Share Tech Mono',monospace;font-size:7px;padding:5px;border:1px solid #ff9900;background:transparent;color:#ff9900;cursor:pointer;letter-spacing:1px;">⚡ SCRAMBLE</button>
+        <button onclick="airRTB()" style="font-family:'Share Tech Mono',monospace;font-size:7px;padding:5px;border:1px solid #888;background:transparent;color:#888;cursor:pointer;letter-spacing:1px;">↩ RTB</button>
+        <button onclick="airSetCAP()" style="font-family:'Share Tech Mono',monospace;font-size:7px;padding:5px;border:1px solid #ffcc00;background:transparent;color:#ffcc00;cursor:pointer;letter-spacing:1px;">◎ SET CAP</button>
+        <button onclick="airIntercept()" style="font-family:'Share Tech Mono',monospace;font-size:7px;padding:5px;border:1px solid #ff4444;background:transparent;color:#ff4444;cursor:pointer;letter-spacing:1px;">✈ INTERCEPT</button>
+      </div>
+      <div id="air-cmd-fb" style="font-family:'Share Tech Mono',monospace;font-size:7px;color:#00ff88;margin-top:6px;display:none;">✓ Order acknowledged</div>
+    </div>
+
+    <!-- Live traffic info -->
+    <div style="padding:6px 10px;border-top:1px solid var(--border1);" id="live-traffic-panel">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--text-dim);letter-spacing:1px;margin-bottom:4px;">LIVE TRAFFIC</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:#ff9900;" id="live-traffic-count">OFF — Toggle to enable</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--text-dim);margin-top:2px;" id="live-traffic-updated"></div>
+    </div>
+  </div>
+
+  <!-- RIGHT BOTTOM: Event log -->
+  <div class="av-panel" style="overflow-y:auto;">
+    <div class="ph"><div class="pt av">Air Operations Log</div><div class="pb live">LIVE</div></div>
+    <div id="air-log"></div>
+  </div>
+
 </div>
 
 
@@ -1518,7 +1692,7 @@ function updateThreatBadge() {
 }
 
 function showNextThreat() {
-  if(currentTheater === 'navy') return;
+  if(currentTheater === 'navy' || currentTheater === 'air') return;
   if(threatQueue.length === 0) return;
   currentThreat = threatQueue[0];
   populateModal(currentThreat);
@@ -2603,7 +2777,7 @@ function navySimTick() {
         Math.hypot((b.lat-unit.lat)*111.32, (b.lon-unit.lon)*111.32) < 22
       );
       if(nearBase) {
-        const refuelDt = unit.type==='mpa' ? 120 : 10800;
+        const refuelDt = unit.type==='mpa' ? 120 : 180; // fixed refuel rate
         const rate = unit.type==='mpa' ? 0.15 : 0.04;
         unit.fuel = Math.min(100, unit.fuel + rate * refuelDt * 0.01);
         if(unit.fuel >= 99.5) {
@@ -2623,14 +2797,13 @@ function navySimTick() {
     const dlat = target[0] - unit.lat;
     const dlon = target[1] - unit.lon;
     const dist = Math.hypot(dlat * 111.32, dlon * 111.32 * Math.cos(unit.lat * Math.PI/180));
-    // Adaptive dt: long-range transit gets big steps (visible on ocean map),
-    // short patrol legs get smaller steps (smooth movement)
+    // Adaptive dt — tuned so patrol looks smooth and RTB is visible but not instant
     let dt;
     if(unit.type === 'mpa') {
       dt = 120.0;
     } else {
       const distForDt = Math.hypot((target[0]-unit.lat)*111.32, (target[1]-unit.lon)*111.32*Math.cos(unit.lat*Math.PI/180));
-      dt = distForDt > 400 ? 10800 : distForDt > 150 ? 3600 : 1200;
+      dt = distForDt > 400 ? 1800 : distForDt > 100 ? 600 : 180;
     }
     const speedKmH = unit.speed * 1.852; // knots → km/h
     const stepKm = speedKmH * dt / 3600;
@@ -2710,14 +2883,15 @@ function navySimTick() {
       }
     }
 
-    // Fuel drain — proportional to speed, scaled so full tank lasts ~30 real minutes at cruise
+    // Fuel drain — fixed drain_dt=180 so drain rate is independent of movement speed
+    const FUEL_DT = unit.type === 'mpa' ? 120 : 180;
     const baseDrain = unit.type==='sub'     ? 0.00000185 :
                       unit.type==='uuv'     ? 0.00000116 :
                       unit.type==='mpa'     ? 0.00000694 :
                       unit.type==='carrier' ? 0.00000162 :
                                              0.00000231;  // destroyer/frigate
-    const speedFactor = unit.speed > 0 ? (0.3 + 0.7 * (unit.speed / 30)) : 0.05; // idle burn when stopped
-    unit.fuel = Math.max(0, unit.fuel - baseDrain * dt * speedFactor * 100);
+    const speedFactor = unit.speed > 0 ? (0.3 + 0.7 * (unit.speed / 30)) : 0.05;
+    unit.fuel = Math.max(0, unit.fuel - baseDrain * FUEL_DT * speedFactor * 100);
 
     // Low fuel warnings
     if(unit.fuel <= 20 && !unit._lowFuelWarned) {
@@ -3252,7 +3426,11 @@ function toggleNavyIntel() {
 
 function switchTheater(val) {
   currentTheater = val;
-  closeAllCmdPanels(); // close any open naval command panels on theater switch
+  closeAllCmdPanels();
+  // Close threat modals from other theaters
+  document.getElementById('air-threat-modal').classList.remove('active');
+  const armyOverlay = document.getElementById('threat-overlay');
+  if(armyOverlay) armyOverlay.classList.remove('active');
   const navyView  = document.getElementById('navy-view');
   const landMain  = document.getElementById('main');
   const missionV  = document.getElementById('mission-view');
@@ -3280,8 +3458,23 @@ function switchTheater(val) {
       navyAddLog('FLEET CMD',  'All INS assets reporting nominal. SOSUS network active.', 'ok');
       navyAddLog('SOSUS',      'Hydrophone grid online. 5 sensor nodes operational.', 'info');
     }, 80);
+  } else if(val === 'air') {
+    navyView.classList.remove('active');
+    if(bottombar) bottombar.style.display='none';
+    landMain.style.display = 'none';
+    if(missionV) missionV.classList.remove('active');
+    if(aiV) aiV.classList.remove('active');
+    document.getElementById('air-view').classList.add('active');
+    setTimeout(() => {
+      initAirMap();
+      airMap.invalidateSize();
+      updateAirMap();
+      buildAirAssetList();
+      airAddLog('ATLAS CORE', 'Switched to Air Force Theater — Indian Airspace Command.', 'ok');
+    }, 80);
   } else {
     navyView.classList.remove('active');
+    document.getElementById('air-view').classList.remove('active');
     if(bottombar) bottombar.style.display='';
     switchView('tactical');
     document.querySelectorAll('.nav-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
@@ -4385,6 +4578,730 @@ function buildPortButtons() {
 
 
 
+
+// ═══════════════════════════════════════════════════════════════════════
+// ATLAS AIR FORCE THEATER
+// ═══════════════════════════════════════════════════════════════════════
+
+// ── IAF Asset Definitions ────────────────────────────────────────────────────
+const IAF_AIRBASES = [
+  { id:'AB-HIN', name:'Air Force Station Hindon',   short:'AFS HINDON',   lat:28.697, lon:77.490, command:'Western' },
+  { id:'AB-AMB', name:'Air Force Station Ambala',   short:'AFS AMBALA',   lat:30.368, lon:76.817, command:'Western' },
+  { id:'AB-SUL', name:'Air Force Station Sulur',    short:'AFS SULUR',    lat:11.031, lon:77.084, command:'Southern' },
+  { id:'AB-TEZ', name:'Air Force Station Tezpur',   short:'AFS TEZPUR',   lat:26.709, lon:92.784, command:'Eastern' },
+  { id:'AB-BAR', name:'Air Force Station Bareilly', short:'AFS BAREILLY', lat:28.422, lon:79.451, command:'Central' },
+  { id:'AB-JSR', name:'Air Force Station Jaisalmer',short:'AFS JAISALMER',lat:26.889, lon:70.865, command:'Western' },
+];
+
+const IAF_ASSETS = [
+  { id:'IAF-SU01', name:'Flanker Alpha', pennant:'SU-01', type:'fighter', sub:'Su-30 MKI · 24 Sqn · Hindon',
+    lat:31.2, lon:74.8, heading:320, speed:480, alt:22000, status:'patrol', fuel:78, base:'AB-HIN',
+    icon:'✈', color:'#ff9900',
+    waypoints:[[31.2,74.8],[33.5,73.0],[35.0,74.8],[34.2,77.5],[32.0,79.0],[29.5,77.2]] },
+  { id:'IAF-SU02', name:'Flanker Bravo', pennant:'SU-02', type:'fighter', sub:'Su-30 MKI · 24 Sqn · Hindon',
+    lat:28.5, lon:76.8, heading:250, speed:460, alt:24000, status:'patrol', fuel:65, base:'AB-HIN',
+    icon:'✈', color:'#ff9900',
+    waypoints:[[28.5,76.8],[26.0,74.5],[24.2,71.8],[25.8,69.5],[28.2,70.8],[30.5,73.2]] },
+  { id:'IAF-RF01', name:'Rafale Alpha', pennant:'RB-001', type:'fighter', sub:'Rafale · 17 Sqn Golden Arrows · Ambala',
+    lat:27.8,lon:72.0, heading:215, speed:520, alt:26000, status:'cap', fuel:82, base:'AB-AMB',
+    icon:'✈', color:'#ffcc00',
+    waypoints:[[27.8,72.0],[25.5,70.2],[23.0,68.8],[22.5,71.5],[24.8,73.8],[27.2,75.5]] },
+  { id:'IAF-RF02', name:'Rafale Bravo', pennant:'RB-002', type:'fighter', sub:'Rafale · 17 Sqn Golden Arrows · Ambala',
+    lat:29.5,lon:73.5, heading:195, speed:510, alt:25000, status:'cap', fuel:71, base:'AB-AMB',
+    icon:'✈', color:'#ffcc00',
+    waypoints:[[29.5,73.5],[27.0,71.8],[24.5,70.0],[23.8,72.8],[26.2,75.0],[28.8,76.2]] },
+  { id:'IAF-TJ01', name:'Tejas Alpha', pennant:'LS-001', type:'fighter', sub:'Tejas Mk1A · 45 Sqn · Sulur',
+    lat:13.5,lon:80.2, heading:160, speed:420, alt:18000, status:'patrol', fuel:88, base:'AB-SUL',
+    icon:'✈', color:'#00ff88',
+    waypoints:[[13.5,80.2],[11.0,79.5],[8.5,77.8],[7.2,75.5],[9.5,73.8],[12.8,75.2]] },
+  { id:'IAF-TJ02', name:'Tejas Bravo', pennant:'LS-002', type:'fighter', sub:'Tejas Mk1A · 45 Sqn · Sulur',
+    lat:14.8,lon:78.0, heading:200, speed:410, alt:17000, status:'patrol', fuel:73, base:'AB-SUL',
+    icon:'✈', color:'#00ff88',
+    waypoints:[[14.8,78.0],[12.2,76.5],[10.0,75.0],[8.8,72.8],[11.5,71.5],[14.0,73.2]] },
+  { id:'IAF-AW01', name:'Phalcon Alpha', pennant:'IL-76-AW', type:'awacs', sub:'A-50EI Phalcon · AWACS · Hindon',
+    lat:24.0,lon:76.0, heading:85, speed:380, alt:30000, status:'orbit', fuel:62, base:'AB-HIN',
+    icon:'🛡', color:'#00c8ff',
+    waypoints:[[24.0,76.0],[24.5,80.5],[23.8,85.0],[22.5,81.5],[22.0,77.0],[23.2,74.5]] },
+  { id:'IAF-SU03', name:'Flanker Charlie', pennant:'SU-30', type:'fighter', sub:'Su-30 MKI · 2 Sqn · Tezpur',
+    lat:27.5,lon:91.8, heading:55, speed:470, alt:23000, status:'patrol', fuel:55, base:'AB-TEZ',
+    icon:'✈', color:'#ff9900',
+    waypoints:[[27.5,91.8],[28.8,93.5],[29.5,95.8],[28.2,97.2],[26.5,95.5],[25.8,93.0]] },
+];
+
+
+const IAF_SAM_SITES = [
+  { id:'SAM-DEL', name:'S-400 · Delhi NCR',      lat:28.614, lon:77.209, range:400, type:'S-400',   color:'#ff4444' },
+  { id:'SAM-JAM', name:'S-400 · Jammu',          lat:32.730, lon:74.857, range:400, type:'S-400',   color:'#ff4444' },
+  { id:'SAM-MUM', name:'Akash · Mumbai',          lat:19.076, lon:72.877, range:30,  type:'Akash',   color:'#ff8800' },
+  { id:'SAM-CHE', name:'Akash · Chennai',         lat:13.082, lon:80.270, range:30,  type:'Akash',   color:'#ff8800' },
+  { id:'SAM-KOL', name:'Akash · Kolkata',         lat:22.572, lon:88.363, range:30,  type:'Akash',   color:'#ff8800' },
+  { id:'SAM-AMR', name:'Barak-8 · Amritsar',      lat:31.634, lon:74.873, range:70,  type:'Barak-8', color:'#ffaa00' },
+];
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let airMap = null, airMapInited = false;
+let airState = IAF_ASSETS.map(a => ({...a, wp_idx:0, looping:true}));
+let airMarkers = {}, airTrails = {}, airHistory = {};
+let samCircles = {}, awacsCircles = {};
+let selectedAirAsset = null;
+let liveTrafficOn = false;
+let liveTrafficMarkers = [];
+let samRingsVisible = false, awacsVisible = false;
+let airLog = [];
+
+function airAddLog(src, msg, level='info') {
+  const entry = { src, msg, level, time: new Date().toUTCString().slice(17,25) };
+  airLog.unshift(entry);
+  if(airLog.length > 100) airLog.pop();
+  const el = document.getElementById('air-log');
+  if(!el) return;
+  el.innerHTML = airLog.slice(0,30).map(e =>
+    `<div class="air-log-entry">
+      <span class="air-log-time">${e.time} </span>
+      <span class="air-log-src">[${e.src}] </span>
+      <span class="air-log-${e.level}">${e.msg}</span>
+    </div>`
+  ).join('');
+}
+
+// ── Map init ──────────────────────────────────────────────────────────────────
+function initAirMap() {
+  if(airMapInited) return;
+  airMapInited = true;
+  airMap = L.map('air-map', { center:[22.0, 80.0], zoom:5, zoomControl:true });
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    attribution:'© OpenStreetMap © CartoDB', maxZoom:15, subdomains:'abcd'
+  }).addTo(airMap);
+
+  airMap.on('mousemove', e => {
+    const el = document.getElementById('air-map-coords');
+    if(el) el.textContent = `${e.latlng.lat.toFixed(3)}°N  ${e.latlng.lng.toFixed(3)}°E`;
+  });
+
+  // Draw airbases
+  IAF_AIRBASES.forEach(base => {
+    const html = `<div style="font-size:14px;text-align:center;line-height:1;">✈<div style="font-family:'Share Tech Mono',monospace;font-size:6px;color:#ff9900;white-space:nowrap;">${base.short}</div></div>`;
+    L.marker([base.lat, base.lon], {
+      icon: L.divIcon({ html, className:'', iconSize:[60,24], iconAnchor:[30,8] })
+    }).bindPopup(`<div class="popup-title" style="color:#ff9900">${base.name}</div>
+      <div class="popup-row"><span class="popup-lbl">COMMAND</span><span class="popup-val">${base.command}</span></div>`)
+     .addTo(airMap);
+  });
+
+  // Draw SAM sites (hidden by default)
+  IAF_SAM_SITES.forEach(sam => {
+    const html = `<div style="font-size:10px;text-align:center;color:${sam.color};">⚡<div style="font-family:'Share Tech Mono',monospace;font-size:5px;color:${sam.color};white-space:nowrap;">${sam.type}</div></div>`;
+    L.marker([sam.lat, sam.lon], {
+      icon: L.divIcon({ html, className:'', iconSize:[30,16], iconAnchor:[15,8] })
+    }).bindPopup(`<div class="popup-title" style="color:${sam.color}">${sam.name}</div>
+      <div class="popup-row"><span class="popup-lbl">TYPE</span><span class="popup-val b">${sam.type}</span></div>
+      <div class="popup-row"><span class="popup-lbl">RANGE</span><span class="popup-val">${sam.range} km</span></div>`)
+     .addTo(airMap);
+
+    samCircles[sam.id] = L.circle([sam.lat, sam.lon], {
+      radius: sam.range * 1000,
+      color: sam.color, fillColor: sam.color,
+      fillOpacity: 0.04, opacity: 0.3, weight: 1, dashArray:'4,6'
+    });
+  });
+
+  // AWACS coverage circles (hidden by default)
+  airState.filter(u => u.type === 'awacs').forEach(u => {
+    awacsCircles[u.id] = L.circle([u.lat, u.lon], {
+      radius: 400 * 1000,
+      color: '#00c8ff', fillColor: '#00c8ff',
+      fillOpacity: 0.04, opacity: 0.25, weight:1, dashArray:'6,8'
+    });
+  });
+
+  buildAirAssetList();
+  buildAirBaseList();
+  initAirRadars();
+  airAddLog('ATLAS CORE', 'IAF Air Theater online. All squadrons nominal.', 'ok');
+  airAddLog('RADAR NET', '7 radar stations online. Coverage nominal.', 'ok');
+  airAddLog('WESTERN CMD', 'Su-30 MKI and Rafale CAP active. Borders secured.', 'ok');
+  airAddLog('RADAR NET', 'Long-range radar coverage nominal. All sectors monitored.', 'info');
+}
+
+// ── Asset list ────────────────────────────────────────────────────────────────
+function buildAirAssetList() {
+  const el = document.getElementById('air-asset-list');
+  if(!el) return;
+  const typeOrder = { fighter:0, awacs:1 };
+  const sorted = [...airState].sort((a,b) => (typeOrder[a.type]||9)-(typeOrder[b.type]||9));
+  el.innerHTML = sorted.map(u => `
+    <div class="air-asset-item${selectedAirAsset===u.id?' selected':''}" onclick="selectAirAsset('${u.id}')">
+      <div class="air-asset-name">${u.icon} ${u.name} <span style="color:var(--text-dim)">(${u.pennant})</span></div>
+      <div class="air-asset-sub">${u.sub}</div>
+      <div class="air-asset-stat">${Math.round(u.speed)} kts · ${Math.round(u.alt).toLocaleString()} ft · ${u.status.toUpperCase()} · ${Math.round(u.fuel)}%</div>
+    </div>`).join('');
+}
+
+function buildAirBaseList() {
+  const el = document.getElementById('air-base-list');
+  if(!el) return;
+  el.innerHTML = IAF_AIRBASES.map(b => `
+    <div style="padding:3px 0;font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--text-dim);border-bottom:1px solid var(--border1);">
+      <span style="color:#ff9900;">✈ ${b.short}</span> · ${b.command}
+    </div>`).join('');
+}
+
+// ── Asset selection ───────────────────────────────────────────────────────────
+function selectAirAsset(id) {
+  selectedAirAsset = id;
+  const unit = airState.find(u => u.id === id);
+  if(!unit) return;
+  buildAirAssetList();
+  updateAirTelemetry(unit);
+  if(airMap && airMarkers[id]) airMap.panTo([unit.lat, unit.lon], {animate:true});
+  // Refresh marker selection rings
+  updateAirMap();
+}
+
+function updateAirTelemetry(unit) {
+  document.getElementById('air-telem-hdr').textContent = `${unit.type==='awacs'?'AWACS':'Fighter'} Telemetry — ${unit.pennant}`;
+  document.getElementById('at-spd').textContent = Math.round(unit.speed);
+  document.getElementById('at-alt').textContent = Math.round(unit.alt).toLocaleString();
+  document.getElementById('at-hdg').textContent = Math.round(unit.heading) + '°';
+  const stEl = document.getElementById('at-status');
+  const statusColors = { patrol:'#00ff88', cap:'#ffcc00', orbit:'#00c8ff', rtb:'#888', scramble:'#ff4444', intercept:'#ff4444', grounded:'#888' };
+  stEl.textContent = unit.status.toUpperCase();
+  stEl.style.color = statusColors[unit.status] || '#ff9900';
+}
+
+// ── Air sim tick ──────────────────────────────────────────────────────────────
+function airSimTick() {
+  airState.forEach(unit => {
+    if(unit.status === 'grounded') { unit.speed = 0; return; }
+    if(!unit.waypoints || unit.waypoints.length === 0) return;
+
+    // Clamp wp_idx
+    if(unit.wp_idx === undefined) unit.wp_idx = 0;
+    if(unit._wpDir === undefined) unit._wpDir = 1;
+    unit.wp_idx = Math.max(0, Math.min(unit.wp_idx, unit.waypoints.length - 1));
+
+    const target = unit.waypoints[unit.wp_idx];
+    const dlat = target[0] - unit.lat;
+    const dlon = target[1] - unit.lon;
+    const dist = Math.hypot(dlat * 111.32, dlon * 111.32 * Math.cos(unit.lat * Math.PI/180));
+
+    const dt = unit.type === 'awacs' ? 15 : 90;
+    const stepKm = unit.speed * 1.852 * dt / 3600;
+    const arrivalThresh = Math.max(10, stepKm * 1.5);
+
+    if(dist < arrivalThresh) {
+      if(unit.looping === false) {
+        // RTB — stop at last waypoint
+        if(unit.wp_idx >= unit.waypoints.length - 1) {
+          unit.speed = 0; unit.status = 'grounded';
+          airAddLog(unit.name, `Landed at base. Engines shutdown.`, 'ok');
+        } else {
+          unit.wp_idx++;
+        }
+      } else {
+        // Ping-pong — reverse at ends, never jump back to start
+        const next = unit.wp_idx + unit._wpDir;
+        if(next >= unit.waypoints.length) {
+          unit._wpDir = -1;
+          unit.wp_idx = Math.max(0, unit.waypoints.length - 2);
+        } else if(next < 0) {
+          unit._wpDir = 1;
+          unit.wp_idx = Math.min(1, unit.waypoints.length - 1);
+        } else {
+          unit.wp_idx = next;
+        }
+      }
+    } else {
+      // Move toward target
+      const bearing = Math.atan2(dlon, dlat);
+      const desired = bearing * 180 / Math.PI;
+      const err = ((desired - unit.heading + 180) % 360) - 180;
+      unit.heading = (unit.heading + Math.max(-12, Math.min(12, err * 0.8)) + 360) % 360;
+      // Always snap directly toward target (no heading-based drift that causes curves)
+      const moveKm = Math.min(stepKm, dist);
+      unit.lat += moveKm * Math.cos(bearing) / 111.32;
+      unit.lon += moveKm * Math.sin(bearing) / (111.32 * Math.cos(unit.lat * Math.PI / 180));
+    }
+
+    // Fuel drain
+    if(unit.status !== 'grounded') {
+      unit.fuel = Math.max(0, unit.fuel - (unit.type==='awacs' ? 0.008 : 0.012));
+    }
+    if(unit.fuel <= 20 && !unit._lowFuelWarned) {
+      unit._lowFuelWarned = true;
+      airAddLog(unit.name, `⚠ LOW FUEL: ${Math.round(unit.fuel)}%. RTB recommended.`, 'warn');
+    }
+
+    // Update AWACS coverage circle position
+    if(unit.type === 'awacs' && awacsCircles[unit.id] && awacsVisible) {
+      awacsCircles[unit.id].setLatLng([unit.lat, unit.lon]);
+    }
+  });
+}
+
+
+// ── Map update ────────────────────────────────────────────────────────────────
+function airIcon(unit) {
+  const selected = selectedAirAsset === unit.id;
+  const color = unit.type==='awacs' ? '#00c8ff' : unit.color;
+  const ring = selected ? `<circle cx="20" cy="20" r="18" fill="none" stroke="${color}" stroke-width="1" opacity="0.5"/>` : '';
+  const rot = unit.heading - 90;
+  // Fighter: arrow shape; AWACS: circle
+  const shape = unit.type === 'awacs'
+    ? `<circle cx="20" cy="20" r="7" fill="${color}" opacity="0.9"/>
+       <circle cx="20" cy="20" r="11" fill="none" stroke="${color}" stroke-width="1.5" opacity="0.6"/>`
+    : `<g transform="rotate(${rot},20,20)">
+         <polygon points="20,8 25,28 20,24 15,28" fill="${color}" opacity="0.95"/>
+       </g>`;
+  return L.divIcon({
+    html:`<svg width="40" height="40" xmlns="http://www.w3.org/2000/svg">${ring}${shape}</svg>`,
+    className:'', iconSize:[40,40], iconAnchor:[20,20]
+  });
+}
+
+function updateAirMap() {
+  if(!airMap) return;
+  airState.forEach(unit => {
+    const latlng = [unit.lat, unit.lon];
+    if(!airHistory[unit.id]) airHistory[unit.id] = [];
+    airHistory[unit.id].push(latlng);
+    if(airHistory[unit.id].length > 60) airHistory[unit.id].shift();
+
+    const popup = `<div class="popup-title" style="color:${unit.color}">${unit.name} (${unit.pennant})</div>
+      <div class="popup-row"><span class="popup-lbl">TYPE</span><span class="popup-val b">${unit.sub}</span></div>
+      <div class="popup-row"><span class="popup-lbl">SPEED</span><span class="popup-val">${Math.round(unit.speed)} kts</span></div>
+      <div class="popup-row"><span class="popup-lbl">ALT</span><span class="popup-val">${Math.round(unit.alt).toLocaleString()} ft</span></div>
+      <div class="popup-row"><span class="popup-lbl">STATUS</span><span class="popup-val b">${unit.status.toUpperCase()}</span></div>
+      <div class="popup-row"><span class="popup-lbl">FUEL</span><span class="popup-val ${unit.fuel<25?'w':''}">${Math.round(unit.fuel)}%</span></div>`;
+
+    if(airMarkers[unit.id]) {
+      airMarkers[unit.id].setLatLng(latlng);
+      airMarkers[unit.id].setIcon(airIcon(unit));
+      airMarkers[unit.id].getPopup().setContent(popup);
+      if(airTrails[unit.id]) airTrails[unit.id].setLatLngs(airHistory[unit.id]);
+    } else {
+      airTrails[unit.id] = L.polyline(airHistory[unit.id], {
+        color: unit.color, weight:1, opacity:0.3, dashArray:'3,6'
+      }).addTo(airMap);
+      airMarkers[unit.id] = L.marker(latlng, {icon: airIcon(unit)})
+        .bindPopup(popup, {className:'drone-popup', maxWidth:250})
+        .on('click', () => selectAirAsset(unit.id))
+        .addTo(airMap);
+    }
+  });
+}
+
+// ── Toggles ───────────────────────────────────────────────────────────────────
+function toggleSAMRings() {
+  samRingsVisible = !samRingsVisible;
+  const btn = document.getElementById('sam-toggle-btn');
+  if(samRingsVisible) {
+    Object.values(samCircles).forEach(c => c.addTo(airMap));
+    btn.style.background = 'rgba(255,68,68,0.2)';
+    airAddLog('RADAR NET', 'SAM coverage rings displayed.', 'info');
+  } else {
+    Object.values(samCircles).forEach(c => airMap.removeLayer(c));
+    btn.style.background = 'transparent';
+  }
+}
+
+function toggleAWACSCoverage() {
+  awacsVisible = !awacsVisible;
+  const btn = document.getElementById('awacs-toggle-btn');
+  if(awacsVisible) {
+    Object.values(awacsCircles).forEach(c => {
+      const awacs = airState.find(u => u.type==='awacs');
+      if(awacs) c.setLatLng([awacs.lat, awacs.lon]);
+      c.addTo(airMap);
+    });
+    btn.style.background = 'rgba(0,200,255,0.15)';
+    airAddLog('PHALCON', 'AWACS radar coverage overlay active. 400km detection radius.', 'info');
+  } else {
+    Object.values(awacsCircles).forEach(c => airMap.removeLayer(c));
+    btn.style.background = 'transparent';
+  }
+}
+
+// ── Live ADS-B traffic ────────────────────────────────────────────────────────
+let liveTrafficTimer = null;
+
+function toggleLiveTraffic() {
+  liveTrafficOn = !liveTrafficOn;
+  const btn = document.getElementById('live-toggle-btn');
+  const lbl = document.getElementById('live-toggle-lbl');
+  if(liveTrafficOn) {
+    btn.classList.add('on');
+    lbl.textContent = 'LIVE TRAFFIC: ON';
+    lbl.style.color = '#ff9900';
+    // Hide IAF classified assets
+    Object.values(airMarkers).forEach(m => airMap.removeLayer(m));
+    Object.values(airTrails).forEach(t => airMap.removeLayer(t));
+    fetchLiveTraffic();
+    liveTrafficTimer = setInterval(fetchLiveTraffic, 30000);
+    airAddLog('ADS-B', 'Live ADS-B feed enabled. Classified assets hidden.', 'warn');
+  } else {
+    btn.classList.remove('on');
+    lbl.textContent = 'LIVE TRAFFIC: OFF';
+    lbl.style.color = '';
+    // Clear live markers
+    liveTrafficMarkers.forEach(m => airMap.removeLayer(m));
+    liveTrafficMarkers = [];
+    clearInterval(liveTrafficTimer);
+    // Restore IAF assets
+    airMarkers = {}; airTrails = {};
+    updateAirMap();
+    document.getElementById('live-traffic-count').textContent = 'OFF — Toggle to enable';
+    document.getElementById('live-traffic-updated').textContent = '';
+    airAddLog('ADS-B', 'Live traffic disabled. Classified mode restored.', 'ok');
+  }
+}
+
+async function fetchLiveTraffic() {
+  if(!liveTrafficOn || !airMap) return;
+  try {
+    // India FIR bounding box: lat 6-36, lon 68-98
+    const url = 'https://opensky-network.org/api/states/all?lamin=6&lomin=68&lamax=36&lomax=98';
+    const resp = await fetch(url);
+    if(!resp.ok) throw new Error('API error ' + resp.status);
+    const data = await resp.json();
+
+    // Clear old live markers
+    liveTrafficMarkers.forEach(m => airMap.removeLayer(m));
+    liveTrafficMarkers = [];
+
+    const states = data.states || [];
+    let count = 0;
+    states.forEach(s => {
+      const [icao, callsign, country, , , lon, lat, alt, , , , , , hdg] = s;
+      if(!lat || !lon) return;
+      const cs = (callsign || icao || '???').trim();
+      const altFt = alt ? Math.round(alt * 3.281) : 0;
+      const headingDeg = hdg || 0;
+      const rot = headingDeg - 90;
+      // Color by likely type: military-ish callsigns vs civil
+      const isMil = /^(IAF|IND|AFB|RB|VABB|VOMM|VIDP)/i.test(cs);
+      const color = isMil ? '#ff4444' : '#00aaff';
+      const html = `<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg">
+        <g transform="rotate(${rot},12,12)">
+          <polygon points="12,3 15,18 12,15 9,18" fill="${color}" opacity="0.85"/>
+        </g></svg>`;
+      const marker = L.marker([lat, lon], {
+        icon: L.divIcon({ html, className:'', iconSize:[24,24], iconAnchor:[12,12] })
+      }).bindPopup(`<div class="popup-title" style="color:${color}">${cs}</div>
+        <div class="popup-row"><span class="popup-lbl">COUNTRY</span><span class="popup-val">${country||'—'}</span></div>
+        <div class="popup-row"><span class="popup-lbl">ALT</span><span class="popup-val">${altFt.toLocaleString()} ft</span></div>
+        <div class="popup-row"><span class="popup-lbl">HDG</span><span class="popup-val">${Math.round(headingDeg)}°</span></div>`,
+        {className:'drone-popup'})
+       .addTo(airMap);
+      liveTrafficMarkers.push(marker);
+      count++;
+    });
+
+    document.getElementById('live-traffic-count').textContent = `${count} aircraft over India FIR`;
+    document.getElementById('live-traffic-updated').textContent = 'Updated: ' + new Date().toUTCString().slice(17,25) + ' UTC';
+    airAddLog('ADS-B', `${count} civil/military transponders detected over India FIR.`, 'info');
+  } catch(e) {
+    document.getElementById('live-traffic-count').textContent = 'API unavailable — rate limited';
+    document.getElementById('live-traffic-updated').textContent = 'Try again in 60s';
+    airAddLog('ADS-B', 'OpenSky API unavailable. Rate limit or network error.', 'warn');
+  }
+}
+
+// ── Quick order commands ───────────────────────────────────────────────────────
+function showAirFeedback(msg) {
+  const el = document.getElementById('air-cmd-fb');
+  if(!el) return;
+  el.textContent = '✓ ' + msg;
+  el.style.display = 'block';
+  setTimeout(() => el.style.display='none', 2500);
+}
+
+function airScramble() {
+  const unit = airState.find(u => u.id === selectedAirAsset);
+  if(!unit) { showAirFeedback('Select an asset first'); return; }
+  unit.status = 'scramble';
+  unit.targetSpeed = unit.type === 'awacs' ? 400 : 600;
+  airAddLog('COMMAND', `${unit.name} (${unit.pennant}) → SCRAMBLE ORDER. Maximum thrust.`, 'warn');
+  showAirFeedback('Scramble order transmitted');
+}
+
+function airRTB() {
+  const unit = airState.find(u => u.id === selectedAirAsset);
+  if(!unit) return;
+  const base = IAF_AIRBASES.find(b => b.id === unit.base);
+  if(!base) return;
+  unit.waypoints = [[base.lat, base.lon]];
+  unit.wp_idx = 0; unit.looping = false; unit.status = 'rtb';
+  const hdg = (Math.atan2(base.lon-unit.lon, base.lat-unit.lat)*180/Math.PI+360)%360;
+  unit.heading = hdg;
+  airAddLog('COMMAND', `${unit.name} (${unit.pennant}) → RTB ${base.short}. Descending.`, 'ok');
+  showAirFeedback('RTB order acknowledged');
+}
+
+function airSetCAP() {
+  const unit = airState.find(u => u.id === selectedAirAsset);
+  if(!unit) return;
+  // CAP orbit around current position
+  const r = 0.5;
+  unit.waypoints = [
+    [unit.lat+r, unit.lon], [unit.lat+r, unit.lon+r],
+    [unit.lat,   unit.lon+r], [unit.lat-r, unit.lon+r],
+    [unit.lat-r, unit.lon], [unit.lat-r, unit.lon-r],
+    [unit.lat,   unit.lon-r], [unit.lat+r, unit.lon-r],
+  ];
+  unit.wp_idx = 0; unit.looping = true; unit.status = 'cap';
+  airAddLog('COMMAND', `${unit.name} (${unit.pennant}) → CAP established at ${unit.lat.toFixed(1)}°N ${unit.lon.toFixed(1)}°E.`, 'ok');
+  showAirFeedback('CAP orbit established');
+}
+
+function airIntercept() {
+  const unit = airState.find(u => u.id === selectedAirAsset);
+  if(!unit) return;
+  unit.status = 'intercept';
+  airAddLog('COMMAND', `${unit.name} (${unit.pennant}) → INTERCEPT VECTOR. Click map to set target.`, 'warn');
+  showAirFeedback('Click map to set intercept target');
+  if(airMap) {
+    airMap.getContainer().style.cursor = 'crosshair';
+    airMap.once('click', e => {
+      unit.waypoints = [[e.latlng.lat, e.latlng.lng]];
+      unit.wp_idx = 0; unit.looping = false;
+      const hdg = (Math.atan2(e.latlng.lng-unit.lon, e.latlng.lat-unit.lat)*180/Math.PI+360)%360;
+      unit.heading = hdg;
+      airAddLog('COMMAND', `Intercept course set → ${e.latlng.lat.toFixed(2)}°N ${e.latlng.lng.toFixed(2)}°E.`, 'ok');
+      airMap.getContainer().style.cursor = '';
+    });
+  }
+}
+
+// ── switchTheater air case ─────────────────────────────────────────────────────
+// (handled in switchTheater patch below)
+
+// ── Main air loop ──────────────────────────────────────────────────────────────
+setInterval(() => {
+  if(currentTheater !== 'air') return;
+  airSimTick();
+  updateAirMap();
+  if(selectedAirAsset) {
+    const unit = airState.find(u => u.id === selectedAirAsset);
+    if(unit) updateAirTelemetry(unit);
+  }
+  if(Date.now() % 5000 < 1000) buildAirAssetList();
+  maybeGenerateAirThreat();
+}, 1000);
+
+// Random air log events
+setInterval(() => {
+  if(currentTheater !== 'air') return;
+  const events = [
+    ['WESTERN CMD', 'Rafale CAP sortie nominal. Border secure.', 'ok'],
+    ['PHALCON', 'Airspace scan complete. No unidentified contacts.', 'ok'],
+    ['SOUTHERN CMD', 'Tejas patrol sector clear. Weather nominal.', 'ok'],
+    ['RADAR NET', 'Long-range early warning active. All sectors covered.', 'info'],
+    ['EASTERN CMD', 'Su-30 formation exercise complete.', 'ok'],
+    ['ATC DELHI', 'Restricted airspace active. All civil traffic rerouted.', 'warn'],
+    ['IAF OPS', 'Air-to-air refuelling exercise completed. Il-78 RTB.', 'info'],
+    ['WESTERN CMD', 'Night CAP sortie launched. Sector Alpha secured.', 'ok'],
+  ];
+  const e = events[Math.floor(Math.random()*events.length)];
+  airAddLog(e[0], e[1], e[2]);
+}, 18000);
+
+
+// ── IAF Radar Network ─────────────────────────────────────────────────────────
+const IAF_RADARS = [
+  { id:'RAD-DEL', name:'Rajendra Radar · Delhi',     lat:28.614, lon:77.209, range:500, type:'phased_array' },
+  { id:'RAD-JAM', name:'Swordfish Radar · Jammu',    lat:32.730, lon:74.857, range:600, type:'ballistic_msn' },
+  { id:'RAD-CHE', name:'Green Pine · Chennai',       lat:13.082, lon:80.270, range:450, type:'phased_array' },
+  { id:'RAD-GUW', name:'AESA Radar · Guwahati',      lat:26.144, lon:91.736, range:400, type:'aesa' },
+  { id:'RAD-MUM', name:'AESA Radar · Mumbai',        lat:19.076, lon:72.877, range:400, type:'aesa' },
+  { id:'RAD-TEZ', name:'GCI Radar · Tezpur',         lat:26.709, lon:92.784, range:350, type:'gci' },
+  { id:'RAD-BAR', name:'GCI Radar · Bareilly',       lat:28.422, lon:79.451, range:350, type:'gci' },
+];
+
+const AIR_THREAT_TEMPLATES = {
+  phased_array: [
+    { msg:'Ballistic trajectory detected. Inbound track. Impact estimate 4 minutes.', cls:'BALLISTIC MISSILE', sev:'critical' },
+    { msg:'Stealth contact. Low RCS target, bearing 312°. Speed 900 km/h.', cls:'STEALTH AIRCRAFT', sev:'high' },
+    { msg:'Cruise missile track. Terrain-following flight profile. ETA 6 min.', cls:'CRUISE MISSILE', sev:'critical' },
+  ],
+  ballistic_msn: [
+    { msg:'MRBM track detected. Trajectory analysis: terminal phase. Engaging S-400.', cls:'BALLISTIC MISSILE', sev:'critical' },
+    { msg:'Multiple re-entry vehicles detected. MIRV pattern. Confidence 87%.', cls:'MIRV THREAT', sev:'critical' },
+  ],
+  aesa: [
+    { msg:'Unidentified fast mover. Altitude 45,000 ft. Speed Mach 2.1. Non-cooperative IFF.', cls:'HOSTILE AIRCRAFT', sev:'high' },
+    { msg:'Formation of 4 contacts. Bearing 285°. Closing at 800 km/h. IFF negative.', cls:'HOSTILE FORMATION', sev:'high' },
+    { msg:'UAV swarm detected. 12+ contacts. Low altitude. Bearing 047°.', cls:'UAV SWARM', sev:'medium' },
+    { msg:'Electronic warfare aircraft detected. Jamming detected on military frequencies.', cls:'EW AIRCRAFT', sev:'medium' },
+  ],
+  gci: [
+    { msg:'Unidentified aircraft crossing FIR boundary. No flight plan filed. Non-responsive.', cls:'FIR VIOLATION', sev:'medium' },
+    { msg:'Low-flying contact. Possible terrain masking. Bearing 190°. Speed 600 km/h.', cls:'LOW LEVEL INTRUDER', sev:'high' },
+    { msg:'Fast mover. Possible fighter. Non-cooperative. Heading 225°.', cls:'HOSTILE AIRCRAFT', sev:'high' },
+  ],
+};
+
+// ── Radar state ───────────────────────────────────────────────────────────────
+let radarCircles = {}, radarSweepLayers = {}, radarVisible = false;
+let airPendingThreats = {}, airCurrentThreat = null;
+let airThreatMarkers = {}, airThreatCircles = {};
+let lastAirThreat = 0;
+
+// ── Draw radars on map ────────────────────────────────────────────────────────
+function initAirRadars() {
+  IAF_RADARS.forEach(r => {
+    // Radar icon
+    const color = r.type==='ballistic_msn' ? '#ff4444' : r.type==='phased_array' ? '#ff8800' : '#ffcc00';
+    const html = `<div style="text-align:center;">
+      <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="10" cy="10" r="4" fill="${color}" opacity="0.9"/>
+        <circle cx="10" cy="10" r="8" fill="none" stroke="${color}" stroke-width="1" opacity="0.5"/>
+        <line x1="10" y1="2" x2="10" y2="18" stroke="${color}" stroke-width="0.5" opacity="0.3"/>
+        <line x1="2" y1="10" x2="18" y2="10" stroke="${color}" stroke-width="0.5" opacity="0.3"/>
+      </svg>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:5px;color:${color};white-space:nowrap;margin-top:1px;">${r.id}</div>
+    </div>`;
+    L.marker([r.lat, r.lon], {
+      icon: L.divIcon({ html, className:'', iconSize:[40,28], iconAnchor:[20,10] })
+    }).bindPopup(`<div class="popup-title" style="color:${color}">${r.name}</div>
+      <div class="popup-row"><span class="popup-lbl">TYPE</span><span class="popup-val b">${r.type.replace('_',' ').toUpperCase()}</span></div>
+      <div class="popup-row"><span class="popup-lbl">RANGE</span><span class="popup-val">${r.range} km</span></div>
+      <div class="popup-row"><span class="popup-lbl">STATUS</span><span class="popup-val" style="color:#00ff88">ACTIVE</span></div>`,
+      {className:'drone-popup'}).addTo(airMap);
+
+    // Coverage circle (hidden by default, toggled with radar button)
+    radarCircles[r.id] = L.circle([r.lat, r.lon], {
+      radius: r.range * 1000,
+      color, fillColor: color,
+      fillOpacity: 0.03, opacity: 0.2, weight:1, dashArray:'4,8'
+    });
+  });
+}
+
+function toggleRadarRings() {
+  radarVisible = !radarVisible;
+  const btn = document.getElementById('radar-toggle-btn');
+  if(radarVisible) {
+    Object.values(radarCircles).forEach(c => c.addTo(airMap));
+    if(btn) { btn.style.background='rgba(255,200,0,0.15)'; btn.style.color='#ffcc00'; }
+    airAddLog('RADAR NET', 'Radar coverage rings displayed. All 7 stations active.', 'info');
+  } else {
+    Object.values(radarCircles).forEach(c => airMap.removeLayer(c));
+    if(btn) { btn.style.background='transparent'; btn.style.color='#888'; }
+  }
+}
+
+// ── Threat detection ──────────────────────────────────────────────────────────
+function maybeGenerateAirThreat() {
+  if(currentTheater !== 'air') return;
+  if(Date.now() - lastAirThreat < 60000) return; // min 60s between threats
+  if(Object.keys(airPendingThreats).length >= 2) return;
+  if(Math.random() > 0.018) return;
+
+  const radar = IAF_RADARS[Math.floor(Math.random()*IAF_RADARS.length)];
+  const templates = AIR_THREAT_TEMPLATES[radar.type];
+  const tmpl = templates[Math.floor(Math.random()*templates.length)];
+  const angle = Math.random()*360;
+  const distKm = Math.random()*radar.range*0.7 + 50;
+
+  const threat = {
+    id: `ATH-${Date.now()}-${Math.floor(Math.random()*999)}`,
+    radar_id: radar.id, radar_name: radar.name, radar_type: radar.type,
+    threat_class: tmpl.cls, message: tmpl.msg, severity: tmpl.sev,
+    threat_lat: parseFloat((radar.lat + distKm*Math.cos(angle*Math.PI/180)/111.32).toFixed(4)),
+    threat_lon: parseFloat((radar.lon + distKm*Math.sin(angle*Math.PI/180)/111.32).toFixed(4)),
+    confidence: Math.floor(Math.random()*25+68),
+    ts: Date.now(),
+  };
+
+  // Clamp to India region
+  threat.threat_lat = Math.max(7, Math.min(36, threat.threat_lat));
+  threat.threat_lon = Math.max(65, Math.min(98, threat.threat_lon));
+
+  airPendingThreats[threat.id] = threat;
+  lastAirThreat = Date.now();
+
+  const sevColor = tmpl.sev==='critical'?'#ff4444':tmpl.sev==='high'?'#ff8800':'#ffcc00';
+  airAddLog(radar.name, `[${threat.threat_class}] ${threat.message} Conf: ${threat.confidence}%`, 'warn');
+
+  // Place pulsing marker on map
+  if(airMap) {
+    const html = `<div class="air-threat-dot"></div>`;
+    airThreatMarkers[threat.id] = L.marker([threat.threat_lat, threat.threat_lon], {
+      icon: L.divIcon({ html, className:'', iconSize:[14,14], iconAnchor:[7,7] })
+    }).bindPopup(`<div class="popup-title" style="color:#ff4444">${threat.threat_class}</div>
+      <div class="popup-row"><span class="popup-lbl">RADAR</span><span class="popup-val">${radar.name}</span></div>
+      <div class="popup-row"><span class="popup-lbl">CONF</span><span class="popup-val">${threat.confidence}%</span></div>
+      <div class="popup-row"><span class="popup-lbl">SEV</span><span class="popup-val" style="color:${sevColor}">${tmpl.sev.toUpperCase()}</span></div>`,
+      {className:'drone-popup'}).addTo(airMap);
+
+    // Threat range ring
+    airThreatCircles[threat.id] = L.circle([threat.threat_lat, threat.threat_lon], {
+      radius: 80000, color:'rgba(255,68,68,0.4)',
+      fillColor:'rgba(255,68,68,0.05)', weight:1, dashArray:'4,4'
+    }).addTo(airMap);
+  }
+
+  if(!airCurrentThreat) showAirThreatModal(threat);
+}
+
+function showAirThreatModal(threat) {
+  if(currentTheater !== 'air') return;
+  airCurrentThreat = threat;
+  document.getElementById('atm-class').textContent = threat.threat_class;
+  document.getElementById('atm-msg').textContent = threat.message;
+  document.getElementById('atm-conf').textContent = threat.confidence + '%';
+  document.getElementById('atm-sev').textContent = threat.severity.toUpperCase();
+  document.getElementById('atm-sev').style.color = threat.severity==='critical'?'#ff4444':threat.severity==='high'?'#ff8800':'#ffcc00';
+  document.getElementById('atm-pos').textContent = `${threat.threat_lat.toFixed(2)}°N ${threat.threat_lon.toFixed(2)}°E`;
+  document.getElementById('atm-radar').textContent = threat.radar_name.split(' · ')[0];
+  document.getElementById('atm-sensor').textContent = threat.radar_id;
+  document.getElementById('air-threat-modal').classList.add('active');
+}
+
+function airThreatIntercept() {
+  if(!airCurrentThreat) return;
+  const threat = airCurrentThreat;
+  // Find nearest available fighter
+  const fighter = airState.filter(u => u.type==='fighter' && u.status !== 'grounded' && u.status !== 'rtb')
+    .sort((a,b) => {
+      const da = Math.hypot((a.lat-threat.threat_lat)*111.32, (a.lon-threat.threat_lon)*111.32);
+      const db = Math.hypot((b.lat-threat.threat_lat)*111.32, (b.lon-threat.threat_lon)*111.32);
+      return da - db;
+    })[0];
+
+  if(fighter) {
+    fighter.waypoints = [[threat.threat_lat, threat.threat_lon]];
+    fighter.wp_idx = 0; fighter.looping = false; fighter.status = 'intercept';
+    const hdg = (Math.atan2(threat.threat_lon-fighter.lon, threat.threat_lat-fighter.lat)*180/Math.PI+360)%360;
+    fighter.heading = hdg;
+    const dist = Math.round(Math.hypot((fighter.lat-threat.threat_lat)*111.32, (fighter.lon-threat.threat_lon)*111.32));
+    airAddLog('COMMAND', `${fighter.name} (${fighter.pennant}) → INTERCEPT ${threat.threat_class}. Distance: ${dist}km. BUSTER.`, 'warn');
+  } else {
+    airAddLog('COMMAND', 'INTERCEPT FAILED — no available fighters. Scrambling reserve.', 'warn');
+  }
+
+  // Clear threat
+  airClearThreat(threat.id);
+}
+
+function airThreatDismiss() {
+  if(!airCurrentThreat) return;
+  airAddLog('COMMAND', `Threat ${airCurrentThreat.id} dismissed by operator.`, 'info');
+  airClearThreat(airCurrentThreat.id);
+}
+
+function airClearThreat(id) {
+  delete airPendingThreats[id];
+  document.getElementById('air-threat-modal').classList.remove('active');
+  if(airThreatMarkers[id]) { airMap.removeLayer(airThreatMarkers[id]); delete airThreatMarkers[id]; }
+  if(airThreatCircles[id]) { airMap.removeLayer(airThreatCircles[id]); delete airThreatCircles[id]; }
+  airCurrentThreat = null;
+  // Show next pending threat if any
+  const next = Object.values(airPendingThreats)[0];
+  if(next) setTimeout(() => showAirThreatModal(next), 500);
+}
+
 </script>
 
 <!-- THREAT ALERT MODAL -->
@@ -4439,6 +5356,29 @@ function buildPortButtons() {
 
 <!-- THREAT QUEUE BADGE -->
 <div id="threat-badge" onclick="showNextThreat()">⚠ <span id="threat-count">0</span> THREAT(S)</div>
+
+
+<!-- AIR THREAT MODAL -->
+<div id="air-threat-modal">
+  <div class="atm-header">
+    <div class="atm-title">⚠ AIR THREAT DETECTED</div>
+    <div style="font-size:8px;color:var(--text-dim)" id="atm-sensor"></div>
+  </div>
+  <div class="atm-body">
+    <div class="atm-class" id="atm-class">UNKNOWN CONTACT</div>
+    <div class="atm-msg" id="atm-msg"></div>
+    <div class="atm-grid">
+      <div class="atm-stat"><div class="atm-stat-lbl">CONFIDENCE</div><div class="atm-stat-val" id="atm-conf">—</div></div>
+      <div class="atm-stat"><div class="atm-stat-lbl">SEVERITY</div><div class="atm-stat-val" id="atm-sev">—</div></div>
+      <div class="atm-stat"><div class="atm-stat-lbl">POSITION</div><div class="atm-stat-val" id="atm-pos" style="font-size:9px;">—</div></div>
+      <div class="atm-stat"><div class="atm-stat-lbl">RADAR</div><div class="atm-stat-val" id="atm-radar" style="font-size:9px;">—</div></div>
+    </div>
+    <div class="atm-actions">
+      <button class="atm-btn atm-btn-intercept" onclick="airThreatIntercept()">✈ VECTOR INTERCEPT</button>
+      <button class="atm-btn atm-btn-dismiss" onclick="airThreatDismiss()">✕ DISMISS</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
