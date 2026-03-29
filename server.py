@@ -18,8 +18,9 @@ from fastapi.responses import FileResponse, JSONResponse
 
 from mavlink_sim import MAVLinkSimulator
 from adsb_feed import adsb_feed
+from naval_sim import NavalSimulator
 
-app = FastAPI(title="ATLAS OS Backend", version="0.6")
+app = FastAPI(title="ATLAS OS Backend", version="0.7")
 app.add_middleware(CORSMiddleware, allow_origins=["*"],
                    allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 
@@ -36,6 +37,9 @@ event_log:       deque           = deque(maxlen=200)
 missions:        list[dict]      = []
 pending_threats: dict[str, dict] = {}
 sim: MAVLinkSimulator | None     = None
+naval_sim: NavalSimulator | None = None
+naval_log: list = []            # rolling naval event log
+naval_threats: dict = {}        # pending naval threats
 
 STATIC_ASSETS = [
     {"id":"ATLAS-S-01","name":"ATLAS-S-01","sub":"Sensor Node Gamma",
@@ -66,6 +70,25 @@ def push_log(src: str, msg: str, level: str = "info") -> dict:
              "src": src, "msg": msg, "level": level}
     event_log.appendleft(entry)
     return entry
+
+def naval_on_log(src: str, msg: str, level: str = "info"):
+    entry = {"ts": int(time.time()*1000),
+             "time_utc": time.strftime("%H:%M:%S", time.gmtime()),
+             "src": src, "msg": msg, "level": level}
+    naval_log.insert(0, entry)
+    if len(naval_log) > 200:
+        naval_log.pop()
+
+def naval_on_threat(threat: dict):
+    if len(naval_threats) >= 3:
+        return
+    naval_threats[threat["id"]] = threat
+    loop = asyncio.get_event_loop()
+    loop.create_task(broadcast({
+        "type": "naval_threat",
+        "theater": "navy",
+        **threat
+    }))
 
 push_log("ATLAS CORE", "System boot complete. All subsystems nominal.", "ok")
 push_log("SAT-LINK",   "Primary uplink established. ATLAS-SAT-01 acquired.", "ok")
@@ -218,6 +241,23 @@ async def log_broadcast_loop():
                 await broadcast({"type": "log_batch", "entries": new})
         await asyncio.sleep(1.0)
 
+async def naval_broadcast_loop():
+    """Broadcast naval state to all clients every second."""
+    while True:
+        await asyncio.sleep(1.0)
+        if not ws_clients or naval_sim is None:
+            continue
+        state = naval_sim.get_state()
+        # Push any new naval logs
+        new_logs = naval_log[:10]  # last 10 entries
+        await broadcast({
+            "type":   "naval_state",
+            "assets": state,
+            "log":    new_logs,
+            "threats": list(naval_threats.values()),
+            "ts":     int(time.time()*1000),
+        })
+
 async def adsb_broadcast_loop():
     """Broadcast ADS-B data to all clients every 30s (synced with fetch interval)."""
     last_broadcast_ts = 0
@@ -249,7 +289,7 @@ START_TIME = time.time()
 @app.get("/api/status")
 def get_status():
     return {
-        "server":           "ATLAS CORE v0.6",
+        "server":           "ATLAS CORE v0.7",
         "uptime_s":         int(time.time() - START_TIME),
         "drones_active":    sum(1 for t in telemetry_store.values() if t.get("armed")),
         "drones_total":     len(telemetry_store),
@@ -262,6 +302,34 @@ def get_status():
         "adsb":             adsb_feed.get_summary(),
         "ts":               int(time.time()*1000),
     }
+
+@app.get("/api/naval/state")
+def get_naval_state():
+    return {"assets": naval_sim.get_state() if naval_sim else [], "ts": int(time.time()*1000)}
+
+@app.get("/api/naval/log")
+def get_naval_log(limit: int = 50):
+    return {"entries": naval_log[:limit]}
+
+@app.post("/api/naval/command/{unit_id}")
+async def naval_command(unit_id: str, body: dict):
+    if not naval_sim:
+        return {"error": "naval sim not running"}
+    ok = naval_sim.cmd(unit_id, body.get("command",""), body.get("params",{}))
+    return {"ok": ok}
+
+@app.post("/api/naval/fleet_rtb")
+async def naval_fleet_rtb():
+    if not naval_sim:
+        return {"error": "naval sim not running"}
+    count = naval_sim.fleet_rtb()
+    return {"count": count}
+
+@app.post("/api/naval/threat/dismiss/{threat_id}")
+async def dismiss_naval_threat(threat_id: str):
+    naval_threats.pop(threat_id, None)
+    await broadcast({"type": "naval_threat_dismissed", "threat_id": threat_id})
+    return {"ok": True}
 
 @app.get("/api/adsb")
 def get_adsb():
@@ -454,6 +522,22 @@ async def handle_ws_message(ws: WebSocket, msg: dict):
         push_log("COMMAND", f"ARM → ATLAS-{target}.", "ok" if ok else "warn")
         await broadcast({"type":"arm","target":target,"success":ok})
 
+    elif mtype == "naval_command":
+        unit_id = msg.get("unit_id","")
+        command = msg.get("command","")
+        params  = msg.get("params",{})
+        if naval_sim and unit_id:
+            naval_sim.cmd(unit_id, command, params)
+
+    elif mtype == "naval_fleet_rtb":
+        if naval_sim:
+            naval_sim.fleet_rtb()
+
+    elif mtype == "naval_threat_dismiss":
+        tid = msg.get("threat_id","")
+        naval_threats.pop(tid, None)
+        await broadcast({"type":"naval_threat_dismissed","threat_id":tid})
+
     elif mtype == "command":
         cmd = msg.get("command"); asset = msg.get("asset")
         push_log("COMMAND", f"CMD [{cmd}] → {asset}", "warn")
@@ -471,13 +555,18 @@ async def startup():
     loop.create_task(sim.run(hz=4.0))
     loop.create_task(telemetry_broadcast_loop())
     loop.create_task(log_broadcast_loop())
+    global naval_sim
+    naval_sim = NavalSimulator(on_log=naval_on_log, on_threat=naval_on_threat)
+    loop.create_task(naval_sim.run(hz=1.0))
+    loop.create_task(naval_broadcast_loop())
     loop.create_task(adsb_feed.run())           # Start ADS-B background fetcher
     loop.create_task(adsb_broadcast_loop())     # Broadcast ADS-B to clients
     print("=" * 55)
-    print("  ATLAS OS BACKEND — v0.6")
+    print("  ATLAS OS BACKEND — v0.7")
     print("  WebSocket : ws://localhost:8000/ws")
     print("  REST API  : http://localhost:8000/api/")
-    print("  ADS-B     : India FIR — OpenSky Network")
+    print("  ADS-B     : India FIR — OpenSky Network"
+    print("  Naval Sim : 20 INS assets — multi-user sync"))
     print("=" * 55)
 
 if __name__ == "__main__":
