@@ -565,8 +565,8 @@ async def startup():
     print("  ATLAS OS BACKEND — v0.7")
     print("  WebSocket : ws://localhost:8000/ws")
     print("  REST API  : http://localhost:8000/api/")
-    print("  ADS-B     : India FIR — OpenSky Network"
-    print("  Naval Sim : 20 INS assets — multi-user sync"))
+    print("  ADS-B     : India FIR — OpenSky Network")
+    print("  Naval Sim : 20 INS assets — multi-user sync")
     print("=" * 55)
 
 if __name__ == "__main__":
